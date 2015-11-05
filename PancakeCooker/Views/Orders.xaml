@@ -1,0 +1,101 @@
+﻿<Page
+    x:Class="PancakeCooker.Views.Orders"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PancakeCooker.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" SizeChanged="Page_SizeChanged">
+
+    <RelativePanel Name="mainPanel" Background="#f1f1f1">
+        <RelativePanel Name="infoPanel" RelativePanel.RightOf="menuPanel" Background="White">
+            <Grid Name="infoGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="0" Grid.Column="0" Name="orderInfoPanel" Background="#33244D">
+                    <Grid Name="btnGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="95"></ColumnDefinition>
+                            <ColumnDefinition Width="95"></ColumnDefinition>
+                            <ColumnDefinition Width="95"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Button  Name="notPayBtn" BorderThickness="0" Background="Transparent" Click="notPayBtn_Click" Grid.Row="0" Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Opacity="0.6">
+                            <RelativePanel>
+                                <TextBlock Name="notPayText" VerticalAlignment="Center" HorizontalAlignment="Center" Text="待付款" Foreground="White" FontSize="14" TextAlignment="Right"></TextBlock>
+                                <Ellipse Name="notPayEllipse" Visibility="Collapsed" Width="12" Height="12" Fill="#fd2839" RelativePanel.RightOf="notPayText" RelativePanel.AlignTopWith="notPayText">
+                                </Ellipse>
+                                <TextBlock Name="notPayNumber" Visibility="Collapsed" Width="12"  Height="12" FontSize="8" Foreground="White" Text="0" RelativePanel.RightOf="notPayText" RelativePanel.AlignTopWith="notPayText" VerticalAlignment="Center" TextAlignment="Center">
+                                </TextBlock>
+                            </RelativePanel>
+                        </Button>
+                        <Button  Name="payedBtn" BorderThickness="0" Grid.Row="0" Grid.Column="1" Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="payedBtn_Click" Opacity="1">
+                            <RelativePanel>
+                                <TextBlock Name="payedText" VerticalAlignment="Center" HorizontalAlignment="Center" Text="已付款" Foreground="White" FontSize="14" TextAlignment="Right"></TextBlock>
+                                <Ellipse Name="payedEllipse" Visibility="Collapsed" Width="12" Height="12" Fill="#fd2839" RelativePanel.RightOf="payedText" RelativePanel.AlignTopWith="payedText">
+                                </Ellipse>
+                                <TextBlock Name="payedNumber" Visibility="Collapsed" Width="12" Height="12" FontSize="8" Foreground="White" Text="0" RelativePanel.RightOf="payedText" RelativePanel.AlignTopWith="payedText" VerticalAlignment="Center" TextAlignment="Center">
+                                </TextBlock>
+                            </RelativePanel>
+                        </Button>
+                        <Button  Name="completBtn" BorderThickness="0" Grid.Row="0" Grid.Column="2" Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="completBtn_Click" Opacity="0.6">
+                            <RelativePanel>
+                                <TextBlock Name="completedText" VerticalAlignment="Center" HorizontalAlignment="Center" Text="已完成" Foreground="White" FontSize="14" TextAlignment="Right"></TextBlock>
+                                <Ellipse Name="completedEllipse" Visibility="Collapsed" Width="12" Height="12" Fill="#fd2839" RelativePanel.RightOf="completedText" RelativePanel.AlignTopWith="completedText">
+                                </Ellipse>
+                                <TextBlock Name="completedNumber" Visibility="Collapsed" Width="12" Height="12" FontSize="8" Foreground="White" Text="0" RelativePanel.RightOf="completedText" RelativePanel.AlignTopWith="completedText" VerticalAlignment="Center" TextAlignment="Center">
+                                </TextBlock>
+                            </RelativePanel>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+                <ScrollViewer Name="orderScrollViewer" Grid.Row="1" Grid.Column="0" HorizontalScrollBarVisibility="Hidden" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Enabled">
+                    <Grid Name="orderGrid">
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+        </RelativePanel>
+        <RelativePanel Name="addAddressPanel" RelativePanel.RightOf="menuPanel" Visibility="Collapsed">
+            <TextBlock RelativePanel.AlignVerticalCenterWithPanel="True" Text="当前版本不支持添加收货地址功能" FontSize="22" Foreground="Gray" Margin="20,-20,0,0" TextWrapping="Wrap" ></TextBlock>
+        </RelativePanel>
+        <RelativePanel Name="myPicsPanel" RelativePanel.RightOf="menuPanel" Visibility="Collapsed">
+            <TextBlock RelativePanel.AlignVerticalCenterWithPanel="True" Margin="20,-20,0,0" Text="当前版本不支持我的画廊功能" FontSize="22" Foreground="Gray" TextWrapping="Wrap"></TextBlock>
+        </RelativePanel>
+        <RelativePanel Name="menuPanel" Width="300" Background="#DBD0EE">
+            <RelativePanel Name="contact" Width="{Binding Path=Width,ElementName=menuPanel}" Height="300" Background="#DBD0EE">
+                <Rectangle Name="contractRectangle" Width="{Binding Path=Width,ElementName=contact}" Height="150" Fill="#33244D" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True"></Rectangle>
+                <Ellipse Name="userPic" Width="80" Height="80" StrokeThickness="2" Fill="Black" Stroke="#DBD0EE" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.AlignTopWithPanel="True" Margin="110,110,0,0"></Ellipse>
+                <TextBlock Name="userName" Width="{Binding Path=Width, ElementName=menuPanel}" Height="40" Text="尼古拉斯.凯奇" FontSize="20" Foreground="#333333" TextAlignment="Center" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Below="userPic" Margin="0,20,0,0"></TextBlock>
+            </RelativePanel>
+            <ListBox Name="myInfo" ScrollViewer.VerticalScrollMode="Disabled" Background="Transparent" SelectionChanged="myInfo_SelectionChanged" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Below="contact" >
+                <ListBoxItem Style="{StaticResource ListBoxItemstyle}">
+                    <RelativePanel Width="{Binding Path=Width, ElementName=menuPanel}" Height="30" Name="myorderPanel" Background="Transparent">
+                        <Image Name="orderPic" Source="/Assets/myorder-selected.png" Width="20" Height="20" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" Margin="10,5,0,0"></Image>
+                        <TextBlock Width="100" Height="20" Text="我的订单" TextAlignment="Left" RelativePanel.AlignTopWithPanel="True" RelativePanel.RightOf="orderPic" Margin="15,5,0,0"></TextBlock>
+                        <Ellipse Name="myordersEllipse" Visibility="Collapsed" Width="16" Height="16" Fill="#fd2839" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignTopWithPanel="True" Margin="0,7,30,0"></Ellipse>
+                        <TextBlock Visibility="Collapsed" Name="myordersNumber" Width="16" Height="16" Text="0" FontSize="10" TextAlignment="Center" Foreground="White" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignTopWithPanel="True" Margin="0,7,30,0"></TextBlock>
+                    </RelativePanel>
+                </ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListBoxItemstyle}">
+                    <RelativePanel Width="{Binding Path=Width, ElementName=menuPanel}" Height="30" Name="adressPanel">
+                        <Image Name="addressPic" Source="/Assets/adress.png" Width="20" Height="20" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" Margin="10,5,0,0"></Image>
+                        <TextBlock Width="100" Height="20" Text="收货地址" TextAlignment="Left" RelativePanel.AlignTopWithPanel="True" RelativePanel.RightOf="addressPic" Margin="15,5,0,0"></TextBlock>
+                    </RelativePanel>
+                </ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListBoxItemstyle}">
+                    <RelativePanel Width="{Binding Path=Width, ElementName=menuPanel}" Height="30" Name="mypicPanel">
+                        <Image Name="mypicPic" Source="/Assets/myPic.png" Width="20" Height="20" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" Margin="10,5,0,0"></Image>
+                        <TextBlock Width="100" Height="20" Text="我的画廊" TextAlignment="Left" RelativePanel.AlignTopWithPanel="True" RelativePanel.RightOf="mypicPic" Margin="15,5,0,0"></TextBlock>
+                    </RelativePanel>
+                </ListBoxItem>
+            </ListBox>
+        </RelativePanel>
+    </RelativePanel>
+</Page>

@@ -1,0 +1,448 @@
+﻿<Page
+    x:Class="PancakeCooker.Views.Ink"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PancakeCooker.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" SizeChanged="Page_SizeChanged">
+
+    <RelativePanel Background="#f1f1f1">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="InkState">
+                <VisualState x:Name="narrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1"></AdaptiveTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="tabletBrush.Visibility" Value="Collapsed"></Setter>
+                        <Setter Target="wpBrush.Visibility" Value="Visible"></Setter>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="wideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="640"></AdaptiveTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="wpBrush.Visibility" Value="Collapsed"></Setter>
+                        <Setter Target="tabletBrush.Visibility" Value="Visible"></Setter>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <RelativePanel Name="workPanel" VerticalAlignment="Top" HorizontalAlignment="Left" Background="Transparent" >
+            <InkCanvas Name="pancakeInk" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True"  RelativePanel.AlignRightWithPanel="True"></InkCanvas>
+            <StackPanel Name="menuPanel"  Background="Transparent" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignBottomWithPanel ="True" Margin="0,0,18,40">
+                <Grid Visibility="Visible" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"></ColumnDefinition>
+                        <ColumnDefinition Width="18"></ColumnDefinition>
+                        <ColumnDefinition Width="50"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <RelativePanel Grid.Row="0" Grid.Column="0" Width="50" Height="50" >
+                        <Ellipse Width="50" Height="50" Fill="#E0E0E0"></Ellipse>
+                        <Image Width="30" Height="30" Source="/Assets/shopcart.PNG">
+                            <Image.RenderTransform>
+                                <TranslateTransform X="10" Y="10"></TranslateTransform>
+                            </Image.RenderTransform>
+                        </Image>
+                        <Button Name="shoppingCart" Width="50" Height="50" Click="shoppingCart_Click">
+                            <Button.Background>
+                                <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                            </Button.Background>
+                        </Button>
+                    </RelativePanel>
+                    <RelativePanel Grid.Row="0" Grid.Column="2" Width="50" Height="50">
+                        <Ellipse Width="50" Height="50" Fill="#E0E0E0"></Ellipse>
+                        <SymbolIcon Symbol="Save" RenderTransformOrigin="-0.95,-0.95" Foreground="#808080">
+                            <SymbolIcon.RenderTransform>
+                                <CompositeTransform ScaleX="1.5" ScaleY="1.5"/>
+                            </SymbolIcon.RenderTransform>
+                        </SymbolIcon>
+                        <Button Name="save" Width="50" Height="50" VerticalAlignment="Center" HorizontalAlignment="Center" Click="save_Click">
+                            <Button.Background>
+                                <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                            </Button.Background>
+                        </Button>
+                    </RelativePanel>
+                </Grid>
+            </StackPanel>
+
+            <RelativePanel  Name="wpBrush"   Background="Transparent" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" Margin="18,0,0,40">
+                <RelativePanel Name="wpLeft" Background="Transparent" RelativePanel.AlignBottomWithPanel="True">
+                    <StackPanel Name="wppenBtnPanel" Width="50" Height="50" RelativePanel.AlignBottomWithPanel="True">
+                        <RelativePanel >
+                            <Ellipse Name="wppenEllipse" Width="50" Height="50" Fill="#585B90" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            </Ellipse>
+                            <Image Width="30" Height="30" Source="/Assets/pen-clicked.PNG">
+                                <Image.RenderTransform>
+                                    <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                </Image.RenderTransform>
+                            </Image>
+                            <Button  Name ="wpPenBtn" Width="50" Height="50" Click="wpPenBtn_Click" Visibility="Visible" Background="White" Opacity="0.05"></Button>
+                        </RelativePanel>
+                    </StackPanel>
+                    <StackPanel Name="wppenPanel"  RelativePanel.Above="wppenBtnPanel" Visibility="Collapsed">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50"></RowDefinition>
+                                <RowDefinition Height="18"></RowDefinition>
+                                <RowDefinition Height="50"></RowDefinition>
+                                <RowDefinition Height="18"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <RelativePanel Width="50" Height="50"  Grid.Column="0" Grid.Row="0">
+                                <Ellipse Width="50" Height="50" Fill="#E0E0E0" VerticalAlignment="Center" HorizontalAlignment="Center"></Ellipse>
+                                <Image Name="penImgWp" Width="30" Height="30" Source="/Assets/pen.PNG">
+                                    <Image.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Image.RenderTransform>
+                                </Image>
+                                <Button  Name ="penWP" Width="50" Height="50" Click="pen_Click" Visibility="Visible" Background="White" Opacity="0.05"></Button>
+                            </RelativePanel>
+                            <RelativePanel  Width="50" Height="50"  Grid.Column="0" Grid.Row="2">
+                                <Ellipse Width="50" Height="50" Fill="#E0E0E0" VerticalAlignment="Center" HorizontalAlignment="Center"></Ellipse>
+                                <Image Name="eraserImgWp" Width="30" Height="30" Source="/Assets/eraser.PNG">
+                                    <Image.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Image.RenderTransform>
+                                </Image>
+                                <Button  Name ="eraserWP" Width="50" Height="50" Click="eraser_Click" Visibility="Visible" Background="White" Opacity="0.05">
+                                </Button>
+                            </RelativePanel>
+                        </Grid>
+                    </StackPanel>
+                </RelativePanel>
+                <RelativePanel Name="wpMiddle" Background="Transparent" Width="50" RelativePanel.AlignBottomWithPanel="True" RelativePanel.RightOf="wpLeft" Margin="18,0,0,0">
+                    <RelativePanel Name="colorBtnPanelWp" Width="50" RelativePanel.AlignBottomWithPanel="True" Background="Transparent">
+                        <Ellipse Name="colorBtnBorderEllipseWp" Width="50" Height="50" Fill="#9598B9" Visibility="Collapsed"></Ellipse>
+                        <Rectangle Name="colorBtnBorderRectangleWp" Width="50" Height="25" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignTopWithPanel="True" Fill="#9598B9" Visibility="Collapsed"></Rectangle>
+                        <Ellipse Name="colorBtnOuterEllipseWp" Width="50" Height="50" Fill="#E0E0E0"></Ellipse>
+                        <Ellipse Name="colorBtnInnerEllipseWp" Width="30" Height="30" Fill="#F39C11">
+                            <Ellipse.RenderTransform>
+                                <TranslateTransform X="10" Y="10"></TranslateTransform>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                        <Button Name="colorBtnWp" Width="50" Height="50" Visibility="Visible" Click="color_Click">
+                            <Button.Background>
+                                <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                            </Button.Background>
+                        </Button>
+                    </RelativePanel>
+                    <RelativePanel Name="colorButtonsWp" Background="Transparent" Width="50" Visibility="Collapsed" RelativePanel.Above="colorBtnPanelWp">
+                        <Grid Name="wpColorGrid" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50"></RowDefinition>
+                                <RowDefinition Height="50"></RowDefinition>
+                                <RowDefinition Height="50"></RowDefinition>
+                                <RowDefinition Height="50"></RowDefinition>
+                                <RowDefinition Height="50"></RowDefinition>
+                                <RowDefinition Height="50"></RowDefinition>
+                                <RowDefinition Height="50"></RowDefinition>
+                                <RowDefinition Height="50"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <RelativePanel Grid.Row="0" Grid.Column="0" Width="50" Height="50" Background="Transparent">
+                                <Ellipse Width="50" Height="50" Fill="#9598B9"></Ellipse>
+                                <Rectangle Width="50" Height="25" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True" Fill="#9598B9"></Rectangle>
+                                <Ellipse Width="30" Height="30" Fill="Black">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button Name="wpblack"  Width="50" Height="50" Click="black_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                            <RelativePanel Grid.Row="1" Grid.Column="0" Width="50" Height="50" Background="#9598B9">
+                                <Ellipse Width="30" Height="30" Fill="#A219C2">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button Name="wpviolet" Width="50" Height="50"  Click="violet_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                            <RelativePanel Grid.Row="2" Grid.Column="0" Width="50" Height="50" Background="#9598B9">
+                                <Ellipse Width="30" Height="30" Fill="#315ABE">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button Name="wpblue" Width="50" Height="50" Click="blue_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                            <RelativePanel Grid.Row="3" Grid.Column="0" Width="50" Height="50" Background="#9598B9">
+                                <Ellipse Width="30" Height="30" Fill="#24995B">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button Name="wpgreen" Width="50" Height="50" Click="green_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                            <RelativePanel Grid.Row="4" Grid.Column="0" Width="50" Height="50" Background="#9598B9">
+                                <Ellipse Width="30" Height="30" Fill="#F39C11">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button Name="wporange" Width="50" Height="50" Click="orange_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                            <RelativePanel Grid.Row="5" Grid.Column="0" Width="50" Height="50" Background="#9598B9">
+                                <Ellipse Width="30" Height="30" Fill="#FE6100">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button Name="wpyellow" Width="50" Height="50" Click="yellow_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                            <RelativePanel Grid.Row="6" Grid.Column="0" Width="50" Height="50" Background="#9598B9">
+                                <Ellipse Width="30" Height="30" Fill="#E92B2A">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button Name="wpred" Width="50" Height="50" Click="red_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                            <RelativePanel Grid.Row="7" Grid.Column="0" Width="50" Height="50" Background="#9598B9">
+                                <Ellipse Width="30" Height="30" Fill="White">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button Name="wpwhite" Width="50" Height="50" Click="white_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                        </Grid>
+                    </RelativePanel>
+                </RelativePanel>
+                <RelativePanel Name="wpRight" Background="Transparent" Width="50" Height="50" RelativePanel.AlignBottomWithPanel="True" RelativePanel.RightOf="wpMiddle" Margin="18,0,0,0">
+                    <Ellipse Width="50" Height="50" Fill="#E0E0E0"></Ellipse>
+                    <SymbolIcon Symbol="Add" RenderTransformOrigin="-0.95,-0.95" Foreground="#808080">
+                        <SymbolIcon.RenderTransform>
+                            <CompositeTransform ScaleX="1.5" ScaleY="1.5"/>
+                        </SymbolIcon.RenderTransform>
+                    </SymbolIcon>
+                    <Button Name="wpAddpic" Click="addPicBtn_Click" Width="{Binding Path=Width, ElementName=wpRight}" Height="{Binding Path=Height, ElementName=wpRight}">
+                        <Button.Background>
+                            <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                        </Button.Background>
+                    </Button>
+                </RelativePanel>
+            </RelativePanel>
+            <RelativePanel  Name="tabletBrush"  Background="Transparent" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" Margin="24,0,0,40">
+                <StackPanel Name="draw" Background="Transparent" Height="50" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="100*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"></ColumnDefinition>
+                            <ColumnDefinition Width="24"></ColumnDefinition>
+                            <ColumnDefinition Width="50"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <RelativePanel Width="50" Height="50" Grid.Row="0" Grid.Column="0">
+                            <Ellipse Width="50" Height="50" Fill="#E0E0E0" VerticalAlignment="Center" HorizontalAlignment="Center"></Ellipse>
+                            <Image Name="eraserImg" Width="30" Height="30" Source="/Assets/eraser.PNG">
+                                <Image.RenderTransform>
+                                    <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                </Image.RenderTransform>
+                            </Image>
+                            <Button  Name ="eraser" Width="50" Height="50" Click="eraser_Click" Visibility="Visible" Background="White" Opacity="0.05">
+                            </Button>
+                        </RelativePanel>
+                        <RelativePanel Grid.Row="0" Grid.Column="2">
+                            <Ellipse Width="50" Height="50" Fill="#585B90" VerticalAlignment="Center" HorizontalAlignment="Center"></Ellipse>
+                            <Image Name="penImg" Width="30" Height="30" Source="/Assets/pen-clicked.PNG">
+                                <Image.RenderTransform>
+                                    <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                </Image.RenderTransform>
+                            </Image>
+                            <Button  Name ="pen" Width="50" Height="50" Click="pen_Click" Visibility="Visible" Background="White" Opacity="0.05"></Button>
+                        </RelativePanel>
+                    </Grid>
+                </StackPanel>
+                <RelativePanel Name="colorPanel" Background="Transparent" RelativePanel.AlignBottomWithPanel="True" Height="50"  RelativePanel.RightOf="draw" Margin="24,0,0,0">
+                    <RelativePanel Name="colorBtnPanel" Width="50" Height="50" Background="Transparent">
+                        <Ellipse Name="colorBtnBorderEllipse" Width="50" Height="50" Fill="#9598B9" Visibility="Collapsed"></Ellipse>
+                        <Rectangle Name="colorBtnBorderRectangle" Width="25" Height="50" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignTopWithPanel="True" Fill="#9598B9" Visibility="Collapsed"></Rectangle>
+                        <Ellipse Name="colorBtnOuterEllipse" Width="50" Height="50" Fill="#E0E0E0"></Ellipse>
+                        <Ellipse Name="colorBtnInnerEllipse" Width="30" Height="30" Fill="#F39C11">
+                            <Ellipse.RenderTransform>
+                                <TranslateTransform X="10" Y="10"></TranslateTransform>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                        <Button Name="colorBtn" Width="50" Height="50" Visibility="Visible" Click="color_Click">
+                            <Button.Background>
+                                <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                            </Button.Background>
+                        </Button>
+                    </RelativePanel>
+                    <StackPanel Name="colorButtons" Height="50" Visibility="Collapsed" RelativePanel.RightOf="colorBtnPanel" Background="Transparent">
+                        <Grid Name="tabColorGrid" Background="Transparent">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"></ColumnDefinition>
+                                <ColumnDefinition Width="50"></ColumnDefinition>
+                                <ColumnDefinition Width="50"></ColumnDefinition>
+                                <ColumnDefinition Width="50"></ColumnDefinition>
+                                <ColumnDefinition Width="50"></ColumnDefinition>
+                                <ColumnDefinition Width="50"></ColumnDefinition>
+                                <ColumnDefinition Width="50"></ColumnDefinition>
+                                <ColumnDefinition Width="50"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <RelativePanel Grid.Row="0" Grid.Column="0" Width="50" Height="50" Background="#9598B9">
+                                <Ellipse Width="30" Height="30" Fill="#ffffff">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button Name="white" Width="50" Height="50" Click="white_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                            <RelativePanel Grid.Row="0" Grid.Column="1" Width="50" Height="50" Background="#9598B9">
+                                <Ellipse Width="30" Height="30" Fill="#E92B2A">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button Name="red" Width="50" Height="50"  Click="red_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                            <RelativePanel Grid.Row="0" Grid.Column="2" Width="50" Height="50" Background="#9598B9">
+                                <Ellipse Width="30" Height="30" Fill="#FE6100">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button  Name="yellow" Width="50" Height="50" Click="yellow_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                            <RelativePanel Grid.Row="0" Grid.Column="3" Width="50" Height="50" Background="#9598B9">
+                                <Ellipse Width="30" Height="30" Fill="#F39C11">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button Name="orange" Width="50" Height="50" Click="orange_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                            <RelativePanel Grid.Row="0" Grid.Column="4" Width="50" Height="50" Background="#9598B9">
+                                <Ellipse Width="30" Height="30" Fill="#24995B">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button Name="green" Width="50" Height="50" Click="green_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                            <RelativePanel Grid.Row="0" Grid.Column="5" Width="50" Height="50" Background="#9598B9">
+                                <Ellipse Width="30" Height="30" Fill="#315ABE">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button Name="blue" Width="50" Height="50" Click="blue_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                            <RelativePanel Grid.Row="0" Grid.Column="6" Width="50" Height="50" Background="#9598B9">
+                                <Ellipse Width="30" Height="30" Fill="#A219C2">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button Name="violet" Width="50" Height="50" Click="violet_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                            <RelativePanel Grid.Row="0" Grid.Column="7" Width="50" Height="50" Background="Transparent">
+                                <Ellipse Width="50" Height="50" Fill="#9598B9"></Ellipse>
+                                <Rectangle Width="25" Height="50" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" Fill="#9598B9"></Rectangle>
+                                <Ellipse Width="30" Height="30" Fill="Black">
+                                    <Ellipse.RenderTransform>
+                                        <TranslateTransform X="10" Y="10"></TranslateTransform>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                                <Button Name="black"  Width="50" Height="50" Click="black_Click">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                                    </Button.Background>
+                                </Button>
+                            </RelativePanel>
+                        </Grid>
+                    </StackPanel>
+                </RelativePanel>
+                <RelativePanel Name="addPic" Background="Transparent" RelativePanel.AlignBottomWithPanel="True" Height="50" Width="50" RelativePanel.RightOf="colorPanel" Margin="24,0,0,0">
+                    <Ellipse Width="50" Height="50" Fill="#E0E0E0"></Ellipse>
+                    <SymbolIcon Symbol="Add" RenderTransformOrigin="-0.95,-0.95" Foreground="#808080">
+                        <SymbolIcon.RenderTransform>
+                            <CompositeTransform ScaleX="1.5" ScaleY="1.5"/>
+                        </SymbolIcon.RenderTransform>
+                    </SymbolIcon>
+                    <Button Name="addPicBtn" Width="50" Height="50" Click="addPicBtn_Click">
+                        <Button.Background>
+                            <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                        </Button.Background>
+                    </Button>
+                </RelativePanel>
+            </RelativePanel>
+        </RelativePanel>
+    </RelativePanel>
+</Page>

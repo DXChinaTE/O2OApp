@@ -1,0 +1,86 @@
+﻿<Page
+    x:Class="PancakeCooker.Custom"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PancakeCooker"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:data="using:PancakeCooker"
+    mc:Ignorable="d" SizeChanged="Page_SizeChanged" Loaded="Page_Loaded" Loading="Page_Loading" >
+
+    <Page.Resources>
+        <CollectionViewSource x:Name="ContactsCVS"  IsSourceGrouped="False" />
+        <DataTemplate x:Name="ContactGridViewTemplate" x:DataType="data:PicInfo">
+            <StackPanel Orientation="Vertical" Margin="10,10,10,10">
+                <Grid >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Border BorderBrush="White" BorderThickness="1" Background="{x:Bind brush}" CornerRadius="5,5,5,5"></Border>
+                    <Button Width="200" Height="200" BorderThickness="0" Click="Btn_Click">
+                        <Button.Background>
+                            <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
+                        </Button.Background>
+                    </Button>
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+
+    <RelativePanel Name="main" Width="Auto" Height="Auto" Background="#f1f1f1" >
+        <Grid Name="picGrid" Margin="10,10,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <GridView ItemsSource="{x:Bind ContactsCVS.View}"
+                  ItemTemplate="{StaticResource ContactGridViewTemplate}"
+                  Grid.Row="1"
+                  Grid.ColumnSpan="2">
+            </GridView>
+        </Grid>
+        <RelativePanel Name="hidePanel" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" Visibility="Collapsed" Width="Auto" Height="Auto" PointerPressed="hidePanel_PointerPressed">
+            <RelativePanel.Background>
+                <SolidColorBrush Color="Black" Opacity="0.6"></SolidColorBrush>
+            </RelativePanel.Background>
+            <RelativePanel Name="operatePanel" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True">
+                <RelativePanel Name="picPanel" Width="300" Height="300"  RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True">
+                    <RelativePanel.Background>
+                        <SolidColorBrush Color="#F1F1F1" Opacity="1"></SolidColorBrush>
+                    </RelativePanel.Background>
+                    <Grid Width="280" Height="280" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <!--<Image Name="selectImag" Stretch="Fill" VerticalAlignment="Center" HorizontalAlignment="Center"></Image>-->
+                        <Border Name="selectImag" BorderBrush="Gray" BorderThickness="1" CornerRadius="5,5,5,5"></Border>
+                    </Grid>
+                </RelativePanel>
+                <RelativePanel Name="btnPanel" Width="300" Height="40" RelativePanel.Below="picPanel" RelativePanel.AlignLeftWithPanel="True">
+                    <RelativePanel.Background>
+                        <SolidColorBrush Color="#DBDBDB" Opacity="1"></SolidColorBrush>
+                    </RelativePanel.Background>
+                    <Button Name="select" BorderThickness="0" BorderBrush="#FF4E00" Width="280" Height="30" Click="select_Click" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+                        <Button.Background>
+                            <SolidColorBrush Color="#FF4E00" Opacity="1"></SolidColorBrush>
+                        </Button.Background>
+                        <Button.Content>
+                            <TextBlock Text="选择颜色" Foreground="White"></TextBlock>
+                        </Button.Content>
+                    </Button>
+                </RelativePanel>
+            </RelativePanel>
+        </RelativePanel>
+    </RelativePanel>
+</Page>

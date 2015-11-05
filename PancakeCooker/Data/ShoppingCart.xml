@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<goods>
+    <item>
+      <img>D:\WorkSpace\PancakeCooker\PancakeCooker\bin\x86\Debug\AppX\Images\图片10.png</img>
+      <imageName>图片10</imageName>
+      <count>2</count>
+      <price>35</price>
+      <productName>白杯子</productName>
+    </item>    
+</goods>
