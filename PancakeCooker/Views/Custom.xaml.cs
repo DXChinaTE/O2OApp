@@ -33,14 +33,20 @@ namespace PancakeCooker
         private Dictionary<ImageBrush, string> picPaths = new Dictionary<ImageBrush, string>();
         private List<string> imageList = new List<string>();
         private const string BORDER = "Windows.UI.Xaml.Controls.Border";
+        private double _picWidth = 200;
         public Custom()
         {
+            
             this.InitializeComponent();
             ContactsCVS.Source = new ObservableCollection<PicInfo>();
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
             {
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
-            }                  
+            }
+            if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
+            {                
+                _picWidth = (Window.Current.Bounds.Width - 48) / 2;
+            }
         }
 
         private void HardwareButtons_BackPressed(object sender, Windows.Phone.UI.Input.BackPressedEventArgs e)
@@ -163,6 +169,7 @@ namespace PancakeCooker
                 try
                 {
                     PicInfo info = new PicInfo(item);
+                    info.picWidth = _picWidth;
                     ImageBrush brush = await info.InitPic();
                     if (brush != null)
                     {
@@ -201,6 +208,7 @@ namespace PancakeCooker
     {
         public ImageBrush brush;
         public string picPath = String.Empty;
+        public double picWidth = 0;
         public PicInfo(string path)
         {
             picPath = path;

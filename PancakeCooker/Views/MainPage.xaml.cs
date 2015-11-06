@@ -175,8 +175,6 @@ namespace PancakeCooker
         {
             menuPanel.Height = Window.Current.Bounds.Height - TopPanel.Height;
             TopPanel.Width = Window.Current.Bounds.Width;
-            MainWindow.Width = Window.Current.Bounds.Width;
-            MainWindow.Height = Window.Current.Bounds.Height;
             mainPanel.Width = mainFrame.Width = Window.Current.Bounds.Width;
             if (TopPanel.Visibility == Visibility.Visible)
             {

@@ -6,8 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" SizeChanged="Page_SizeChanged">
-
-    <RelativePanel Background="#f1f1f1">
+    <RelativePanel Background="#f1f1f1" PointerMoved="MainWindow_PointerMoved">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="MainWindowStates">
                 <VisualState x:Name="NarrowState">
@@ -32,8 +31,7 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <RelativePanel Name="MainWindow" PointerMoved="MainWindow_PointerMoved">
-            <RelativePanel  Name="TopPanel" Height="40" RelativePanel.AlignLeftWithPanel ="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignTopWithPanel="True" Background="#412F5F">
+        <RelativePanel  Name="TopPanel" Height="40" RelativePanel.AlignLeftWithPanel ="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignTopWithPanel="True" Background="#412F5F">
                 <StackPanel Name="wpMenuBtnPanel" Visibility="Collapsed">
                     <ToggleButton Name="toggleBtn" Style="{StaticResource SymbolButton}" Click="ToggleButton_Click" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" Height="{Binding Path=Height, ElementName=wpMenuBtnPanel}" Width="{Binding Path=Height, ElementName=wpMenuBtnPanel}" VerticalAlignment="Top" HorizontalAlignment="Left">
                         <ToggleButton.Content>
@@ -102,8 +100,8 @@
                     <Button Width="50" Height="40" Background="Transparent" BorderThickness="0" Opacity="0" Name="GoToShopCart" Click="GoToShopCart_Click"></Button>
                 </RelativePanel>
             </RelativePanel>
-            <RelativePanel Name="mainPanel" RelativePanel.Below="TopPanel" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignBottomWithPanel="True">
-                <Frame x:Name="mainFrame" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignLeftWithPanel="True"  Visibility="Visible"></Frame>
+            <RelativePanel Name="mainPanel" RelativePanel.Below="TopPanel" RelativePanel.AlignLeftWithPanel="True" >
+                <Frame x:Name="mainFrame" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True"  Visibility="Visible"></Frame>
             </RelativePanel>
             <StackPanel Name="menuPanel"  Width="150" Height="560" RelativePanel.Below="TopPanel" RelativePanel.AlignLeftWithPanel="True" Visibility="Collapsed">
                 <StackPanel.Background>
@@ -150,5 +148,4 @@
                 </Grid>
             </StackPanel>
         </RelativePanel>
-    </RelativePanel>
 </Page>

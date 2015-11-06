@@ -47,7 +47,7 @@ namespace PancakeCooker.Views
             }
             if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
             {
-                this.Margin = new Thickness(0, -8, 0, 0);
+                this.Margin = new Thickness(0, 0, 0, 0);
             }
             string platform = Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily;//Windows.Mobile Windows.Desktop
             if(platform.Equals("Windows.Mobile"))

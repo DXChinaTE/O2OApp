@@ -36,6 +36,8 @@ namespace PancakeCooker.Views
         private BitmapImage source = null;
         private bool isInkPic = false;
         private string imgPath = String.Empty;
+        private double _picWidth = 220;
+        private Thickness _margin = new Thickness(10, 0, 0, 265);
         private string imageName = String.Empty;
         private const string BUTTON = "Windows.UI.Xaml.Controls.Button";
         private const string CHECKBOX = "Windows.UI.Xaml.Controls.CheckBox";
@@ -44,9 +46,13 @@ namespace PancakeCooker.Views
         public Store()
         {
             this.InitializeComponent();
+            double width = this.Height;
+            width = Window.Current.Bounds.Height;
             if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
             {
-                this.Margin = new Thickness(0, -4, 0, 0);
+                this.Margin = new Thickness(0, 0, 0, 0);
+                _picWidth = (Window.Current.Bounds.Width - 90) / 2;
+                _margin = new Thickness(10, 0, 0, 35 + _picWidth);
             }
             GoodsCVS.Source = new ObservableCollection<Carrier>();
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
@@ -135,6 +141,8 @@ namespace PancakeCooker.Views
                 Carrier carrier1 = new Carrier();
                 carrier1.Name = "白杯子";
                 carrier1.price = "￥35";
+                carrier1.picWidth = _picWidth;
+                carrier1.checkBorder = _margin;
                 carrier1.backGround = brush;
                 list.Add(carrier1);
 
@@ -142,6 +150,8 @@ namespace PancakeCooker.Views
                 Carrier carrier2 = new Carrier();
                 carrier2.Name = "黑杯子";
                 carrier2.price = "￥35";
+                carrier2.picWidth = _picWidth;
+                carrier2.checkBorder = _margin;
                 carrier2.backGround = brush;
                 list.Add(carrier2);
 
@@ -149,6 +159,8 @@ namespace PancakeCooker.Views
                 Carrier carrier3 = new Carrier();
                 carrier3.Name = "白T恤";
                 carrier3.price = "￥86";
+                carrier3.picWidth = _picWidth;
+                carrier3.checkBorder = _margin;
                 carrier3.backGround = brush;
                 list.Add(carrier3);
 
@@ -156,6 +168,8 @@ namespace PancakeCooker.Views
                 Carrier carrier4 = new Carrier();
                 carrier4.Name = "黑T恤";
                 carrier4.price = "￥86";
+                carrier4.picWidth = _picWidth;
+                carrier4.checkBorder = _margin;
                 carrier4.backGround = brush;
                 list.Add(carrier4);
             }
@@ -189,7 +203,7 @@ namespace PancakeCooker.Views
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             topPannel.Width = Window.Current.Bounds.Width;
-            buttom.Width =  Window.Current.Bounds.Width;
+            goodsGrid.Width = buttom.Width =  Window.Current.Bounds.Width;
             buttom.Height =  Window.Current.Bounds.Height - topPannel.Height;
         }
 
@@ -252,6 +266,8 @@ namespace PancakeCooker.Views
     {
         public string Name { get; set; }
         public string price { get; set; }
+        public Thickness checkBorder { get; set; }
+        public double picWidth { get; set; }
         public ImageBrush backGround { get; set; }      
     }
 }

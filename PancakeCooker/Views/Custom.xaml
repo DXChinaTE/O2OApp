@@ -11,7 +11,7 @@
     <Page.Resources>
         <CollectionViewSource x:Name="ContactsCVS"  IsSourceGrouped="False" />
         <DataTemplate x:Name="ContactGridViewTemplate" x:DataType="data:PicInfo">
-            <StackPanel Orientation="Vertical" Margin="10,10,10,10">
+            <StackPanel Orientation="Vertical" Margin="10,10,10,10" Name="grid">
                 <Grid >
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"></RowDefinition>
@@ -20,7 +20,7 @@
                         <ColumnDefinition Width="Auto"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <Border BorderBrush="White" BorderThickness="1" Background="{x:Bind brush}" CornerRadius="5,5,5,5"></Border>
-                    <Button Width="200" Height="200" BorderThickness="0" Click="Btn_Click">
+                    <Button Width="{x:Bind picWidth}" Height="{x:Bind picWidth}" BorderThickness="0" Click="Btn_Click">
                         <Button.Background>
                             <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
                         </Button.Background>
@@ -31,7 +31,7 @@
     </Page.Resources>
 
     <RelativePanel Name="main" Width="Auto" Height="Auto" Background="#f1f1f1" >
-        <Grid Name="picGrid" Margin="10,10,0,0">
+        <Grid Name="picGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
