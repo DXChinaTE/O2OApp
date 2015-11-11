@@ -5,7 +5,7 @@
   <Properties>
     <DisplayName>PancakeCooker</DisplayName>
     <PublisherDisplayName>v-yihtan</PublisherDisplayName>
-    <Logo>Assets\StoreLogo.png</Logo>
+    <Logo>Assets\store icon 50.png</Logo>
   </Properties>
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
@@ -15,13 +15,15 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="PancakeCooker.App">
-      <uap:VisualElements DisplayName="礼品定制" Square150x150Logo="Assets\icon150X150.jpg" Square44x44Logo="Assets\icon44X44.jpg" Description="PancakeCooker" BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png">
+      <uap:VisualElements DisplayName="礼品定制" Square150x150Logo="Assets\icon150.png" Square44x44Logo="Assets\icon44.png" Description="PancakeCooker" BackgroundColor="#8D5690">
+        <uap:DefaultTile Wide310x150Logo="Assets\icon310 150.png" Square310x310Logo="Assets\Square310x310Logo.png" Square71x71Logo="Assets\Square71x71Logo.png">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square150x150Logo" />
+            <uap:ShowOn Tile="wide310x150Logo" />
+            <uap:ShowOn Tile="square310x310Logo" />
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
-        <uap:SplashScreen Image="Assets\icon1240X600.jpg" />
+        <uap:SplashScreen Image="Assets\Splash Screen 620 300.png" />
       </uap:VisualElements>
     </Application>
   </Applications>

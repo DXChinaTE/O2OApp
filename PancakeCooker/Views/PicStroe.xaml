@@ -5,7 +5,7 @@
     xmlns:local="using:PancakeCooker.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:data="using:PancakeCooker"
+    xmlns:data="using:PancakeCooker.Views"
     mc:Ignorable="d" SizeChanged="Page_SizeChanged">
 
     <Page.Resources>

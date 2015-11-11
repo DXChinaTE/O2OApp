@@ -5,40 +5,8 @@
     xmlns:local="using:PancakeCooker.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:data="using:PancakeCooker.Views"
     mc:Ignorable="d" SizeChanged="Page_SizeChanged">
-
-    <Page.Resources>
-        <CollectionViewSource x:Name="GoodsCVS"  IsSourceGrouped="False" />
-        <DataTemplate x:Name="GoodsGridViewTemplate" x:DataType="data:Carrier">
-            <StackPanel Orientation="Vertical" Margin="10,10,10,10">
-                <Grid Background="#EBEBEB">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <RelativePanel>
-                        <CheckBox RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignTopWithPanel="True" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" Margin="{x:Bind checkBorder}" Style="{StaticResource CheckBoxStyle}"/>
-                        <Grid RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" Margin="10,0,10,40">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <Border BorderBrush="White" Width="{x:Bind picWidth}" Height="{x:Bind picWidth}" Background="{x:Bind backGround}"  BorderThickness="1" CornerRadius="5,5,5,5"></Border>
-                        </Grid>
-                        <TextBlock Margin="15,0,0,10" Width="50" Height="25" Foreground="#333333" Text="{x:Bind Name}" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True" TextAlignment="Left"></TextBlock>
-                        <TextBlock Margin="0,0,10,10" Width="50" Height="25" Foreground="#fd2839" Text="{x:Bind price}" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignBottomWithPanel="True" TextAlignment="Right"></TextBlock>
-                    </RelativePanel>
-                    <Border BorderBrush="White" BorderThickness="1" CornerRadius="5,5,5,5"></Border>
-                </Grid>
-            </StackPanel>
-        </DataTemplate>
-    </Page.Resources>
-    <RelativePanel Width="Auto" Height="Auto" Background="#f1f1f1" VerticalAlignment="Top" HorizontalAlignment="Left">
+    <RelativePanel  Background="#f1f1f1" >
         <RelativePanel Name="topPannel" Height="40" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" Background="#412F5F">
             <StackPanel Name="left" Width="40" Height="40" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" Background="#412F5F">
                 <Button Name="returnBack" Width="40" Height="40" Click="returnBack_Click" Background="Transparent" BorderThickness="0">
@@ -62,23 +30,8 @@
                 </Button>
             </StackPanel>
         </RelativePanel>
-        <RelativePanel Name="buttom" RelativePanel.Below="topPannel" RelativePanel.AlignLeftWithPanel="True" Height="Auto">
-            <Grid Name="goodsGrid">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <GridView ItemsSource="{x:Bind GoodsCVS.View}"
-                      ItemTemplate="{StaticResource GoodsGridViewTemplate}"
-                      Grid.Row="1"
-                      Grid.ColumnSpan="2">
-                </GridView>
-            </Grid>
-        </RelativePanel>
+        <ScrollViewer Name="goodsScrollViewr" RelativePanel.Below="topPannel" RelativePanel.AlignVerticalCenterWithPanel="True" VerticalScrollMode="Enabled" VerticalScrollBarVisibility="Hidden" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled" Margin="10,10,10,0">
+            <RelativePanel Name="goodsPanel"></RelativePanel>
+        </ScrollViewer>
     </RelativePanel>
 </Page>

@@ -8,6 +8,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Xaml;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
@@ -18,12 +19,11 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Xaml.Media.Imaging;
-using PancakeCooker.Views;
 using PancakeCooker.Common;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-namespace PancakeCooker
+namespace PancakeCooker.Views
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -179,10 +179,24 @@ namespace PancakeCooker
             if (TopPanel.Visibility == Visibility.Visible)
             {
                 mainPanel.Height = mainFrame.Height = Window.Current.Bounds.Height - TopPanel.Height;
+                mainPanel.ClearValue(RelativePanel.AlignTopWithPanelProperty);
+                mainPanel.SetValue(RelativePanel.BelowProperty,TopPanel.Name);
+                if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
+                {
+                    mainPanel.Margin = new Thickness(0, 0, 0, 0);
+                }                  
             }
             else
             {
                 mainPanel.Height = mainFrame.Height = Window.Current.Bounds.Height;
+                mainPanel.ClearValue(RelativePanel.BelowProperty);
+                mainPanel.SetValue(RelativePanel.AlignTopWithPanelProperty,true);
+                if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
+                {
+                    StatusBar bar = StatusBar.GetForCurrentView();
+                    double height = bar.OccludedRect.Height;
+                    mainPanel.Margin = new Thickness(0, -height, 0, 0);
+                }                
             }            
         }
 

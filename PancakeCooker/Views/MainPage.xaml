@@ -1,11 +1,12 @@
 ﻿<Page
-    x:Class="PancakeCooker.MainPage"
+    x:Class="PancakeCooker.Views.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:PancakeCooker"
+    xmlns:local="using:PancakeCooker.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" SizeChanged="Page_SizeChanged">
+    
     <RelativePanel Background="#f1f1f1" PointerMoved="MainWindow_PointerMoved">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="MainWindowStates">
@@ -32,14 +33,14 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <RelativePanel  Name="TopPanel" Height="40" RelativePanel.AlignLeftWithPanel ="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignTopWithPanel="True" Background="#412F5F">
-                <StackPanel Name="wpMenuBtnPanel" Visibility="Collapsed">
-                    <ToggleButton Name="toggleBtn" Style="{StaticResource SymbolButton}" Click="ToggleButton_Click" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" Height="{Binding Path=Height, ElementName=wpMenuBtnPanel}" Width="{Binding Path=Height, ElementName=wpMenuBtnPanel}" VerticalAlignment="Top" HorizontalAlignment="Left">
-                        <ToggleButton.Content>
-                            <FontIcon x:Name="Hamburger" Foreground="White" FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" Margin="0,10,0,0"/>
-                        </ToggleButton.Content>
-                    </ToggleButton>
-                </StackPanel>
-                <StackPanel Name="tabletMenuePanel" RelativePanel.AlignLeftWithPanel="True">
+            <StackPanel Name="wpMenuBtnPanel" Visibility="Collapsed">
+                <ToggleButton Name="toggleBtn" Style="{StaticResource SymbolButton}" Click="ToggleButton_Click" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" Height="{Binding Path=Height, ElementName=wpMenuBtnPanel}" Width="{Binding Path=Height, ElementName=wpMenuBtnPanel}" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <ToggleButton.Content>
+                        <FontIcon x:Name="Hamburger" Foreground="White" FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" Margin="0,10,0,0"/>
+                    </ToggleButton.Content>
+                </ToggleButton>
+            </StackPanel>
+            <StackPanel Name="tabletMenuePanel" RelativePanel.AlignLeftWithPanel="True">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="{Binding Path=Height, ElementName=TopPanel}"></RowDefinition>
@@ -98,7 +99,7 @@
                         </TextBlock>
                     </RelativePanel>
                     <Button Width="50" Height="40" Background="Transparent" BorderThickness="0" Opacity="0" Name="GoToShopCart" Click="GoToShopCart_Click"></Button>
-                </RelativePanel>
+               </RelativePanel>
             </RelativePanel>
             <RelativePanel Name="mainPanel" RelativePanel.Below="TopPanel" RelativePanel.AlignLeftWithPanel="True" >
                 <Frame x:Name="mainFrame" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True"  Visibility="Visible"></Frame>
@@ -147,5 +148,5 @@
                     </RelativePanel>
                 </Grid>
             </StackPanel>
-        </RelativePanel>
+    </RelativePanel>
 </Page>

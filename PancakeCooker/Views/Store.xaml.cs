@@ -22,6 +22,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using PancakeCooker.Common;
+using PancakeCooker.Common.ItemTemplatePanel;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -33,11 +34,42 @@ namespace PancakeCooker.Views
     public sealed partial class Store : Page
     {      
         private Dictionary<CheckBox, GoodsInfo> selectedGoods = new Dictionary<CheckBox, GoodsInfo>();
+        private Dictionary<int, GoodsPanel> goodsPanels = new Dictionary<int, GoodsPanel>();
         private BitmapImage source = null;
         private bool isInkPic = false;
         private string imgPath = String.Empty;
-        private double _picWidth = 220;
-        private Thickness _margin = new Thickness(10, 0, 0, 265);
+        private double MinPictureWith { get; set; }
+        private double MaxPictureWith { get; set; }
+        private double _picWidth { get; set; }
+        private double PicWidth
+        {
+            get
+            {
+                return _picWidth;
+            }
+            set
+            {
+                _picWidth = value;
+                goodsPanelWidth = _picWidth + 2 * PictureMargin;
+            }
+        }
+        private double preWidth { get; set; }
+        private double refreshStep { get; set; }
+        private int pictureColumn { get; set; }
+        private double _pictureMargin;
+        private double PictureMargin
+        {
+            get
+            {
+                return _pictureMargin;
+            }
+            set
+            {
+                _pictureMargin = value;
+                goodsPanelWidth = _picWidth + 2 * _pictureMargin;
+            }
+        }
+        private double goodsPanelWidth { get; set; }
         private string imageName = String.Empty;
         private const string BUTTON = "Windows.UI.Xaml.Controls.Button";
         private const string CHECKBOX = "Windows.UI.Xaml.Controls.CheckBox";
@@ -46,21 +78,63 @@ namespace PancakeCooker.Views
         public Store()
         {
             this.InitializeComponent();
-            double width = this.Height;
-            width = Window.Current.Bounds.Height;
-            if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
-            {
-                this.Margin = new Thickness(0, 0, 0, 0);
-                _picWidth = (Window.Current.Bounds.Width - 90) / 2;
-                _margin = new Thickness(10, 0, 0, 35 + _picWidth);
-            }
-            GoodsCVS.Source = new ObservableCollection<Carrier>();
+            InitParam();                  
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
             {
-                Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
+                Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;               
             }
         }
-       
+        
+        private void InitParam()
+        {
+            refreshStep = 10;
+            PictureMargin = 15;            
+            preWidth = Window.Current.Bounds.Width - goodsScrollViewr.Margin.Left - goodsScrollViewr.Margin.Right;
+            if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
+            {                
+                pictureColumn = 2;
+                PicWidth = MinPictureWith = MaxPictureWith = preWidth / pictureColumn - PictureMargin*2;                              
+            }
+            else
+            {
+                PicWidth = MinPictureWith = 200;
+                MaxPictureWith = 250;
+            }
+        }
+
+        private void ResetPicturePanelPositon()
+        {
+            pictureColumn = Convert.ToInt32(Math.Floor(preWidth / (MinPictureWith + 2 * PictureMargin)));
+            PicWidth = preWidth / pictureColumn - 2 * PictureMargin;
+            PicWidth = PicWidth > MaxPictureWith ? MaxPictureWith : PicWidth;
+            foreach (var item in goodsPanels)
+            {
+                item.Value.ClearValue(RelativePanel.BelowProperty);
+                item.Value.ClearValue(RelativePanel.AlignLeftWithPanelProperty);
+                item.Value.ClearValue(RelativePanel.RightOfProperty);
+                item.Value.ClearValue(RelativePanel.AlignTopWithPanelProperty);
+                item.Value.PictureWith = PicWidth;
+                //set left
+                if (item.Key % pictureColumn == 0)
+                {
+                    item.Value.SetValue(RelativePanel.AlignLeftWithPanelProperty, true);
+                }
+                else
+                {
+                    item.Value.SetValue(RelativePanel.RightOfProperty, goodsPanels[item.Key - 1].Name);
+                }
+                //set top
+                if (item.Key / pictureColumn == 0)
+                {
+                    item.Value.SetValue(RelativePanel.AlignTopWithPanelProperty, true);
+                }
+                else
+                {
+                    item.Value.SetValue(RelativePanel.BelowProperty, goodsPanels[item.Key - pictureColumn].Name);
+                }
+            }
+        }
+
         private void HardwareButtons_BackPressed(object sender, Windows.Phone.UI.Input.BackPressedEventArgs e)
         {
             e.Handled = true;
@@ -134,44 +208,111 @@ namespace PancakeCooker.Views
             }
             if (null != source)
             {
-                ObservableCollection<Carrier> list = (ObservableCollection<Carrier>)GoodsCVS.Source;
+                ResourceDictionary dic = Application.Current.Resources;
+                IList<ResourceDictionary> dics = dic.MergedDictionaries;
+                ResourceDictionary resource = null;
+                foreach(var item in dics)
+                {
+                    if(item.Source.AbsolutePath.Contains("/Files/Styles/Styles.xaml"))
+                    {
+                        resource = item;
+                        break;
+                    }
+
+                }
+                object style = null;
+                if(null != resource)
+                {
+                                       
+                    resource.TryGetValue("CheckBoxStyle", out style);
+                }               
+
                 ImageBrush brush = new ImageBrush();
                 brush.ImageSource = source;
                 //item 1
-                Carrier carrier1 = new Carrier();
-                carrier1.Name = "白杯子";
-                carrier1.price = "￥35";
-                carrier1.picWidth = _picWidth;
-                carrier1.checkBorder = _margin;
-                carrier1.backGround = brush;
-                list.Add(carrier1);
+                GoodsPanel panel1 = new GoodsPanel();
+                panel1.PictureWith = PicWidth;
+                CheckBox check1 = new CheckBox();
+                //check1.SetValue(StyleProperty,);
+                check1.Checked += CheckBox_Checked;
+                check1.Unchecked += CheckBox_Unchecked;
+                if((style as Style) != null)
+                {
+                    check1.SetValue(StyleProperty, style);
+                }
+                panel1.Check = check1;
+                panel1.PictureBrush = brush;
+                panel1.GoodsName = "白杯子";
+                panel1.Price = "￥35";
+                panel1.PicturePath = imgPath;
+                goodsPanels.Add(0,panel1);
+                panel1.SetValue(RelativePanel.AlignLeftWithPanelProperty,true);
+                panel1.SetValue(RelativePanel.AlignTopWithPanelProperty,true);
+                goodsPanel.Children.Add(panel1);
 
                 //item 2
-                Carrier carrier2 = new Carrier();
-                carrier2.Name = "黑杯子";
-                carrier2.price = "￥35";
-                carrier2.picWidth = _picWidth;
-                carrier2.checkBorder = _margin;
-                carrier2.backGround = brush;
-                list.Add(carrier2);
+                GoodsPanel panel2 = new GoodsPanel();
+                panel2.PictureWith = PicWidth;
+                CheckBox check2 = new CheckBox();
+                //check1.SetValue(StyleProperty,);
+                check2.Checked += CheckBox_Checked;
+                check2.Unchecked += CheckBox_Unchecked;
+                panel2.Check = check2;
+                if ((style as Style) != null)
+                {
+                    check2.SetValue(StyleProperty, style);
+                }
+                panel2.PictureBrush = brush;
+                panel2.GoodsName = "黑杯子";
+                panel2.Price = "￥35";
+                panel2.PicturePath = imgPath;
+                goodsPanels.Add(1, panel2);
+                panel2.SetValue(RelativePanel.RightOfProperty, panel1.Name);
+                panel2.SetValue(RelativePanel.AlignTopWithPanelProperty, true);
+                goodsPanel.Children.Add(panel2);
 
                 //item 3
-                Carrier carrier3 = new Carrier();
-                carrier3.Name = "白T恤";
-                carrier3.price = "￥86";
-                carrier3.picWidth = _picWidth;
-                carrier3.checkBorder = _margin;
-                carrier3.backGround = brush;
-                list.Add(carrier3);
+                GoodsPanel panel3 = new GoodsPanel();
+                panel3.PictureWith = PicWidth;
+                CheckBox check3 = new CheckBox();
+                //check1.SetValue(StyleProperty,);
+                check3.Checked += CheckBox_Checked;
+                check3.Unchecked += CheckBox_Unchecked;
+                panel3.Check = check3;
+                if ((style as Style) != null)
+                {
+                    check3.SetValue(StyleProperty, style);
+                }
+                panel3.PictureBrush = brush;
+                panel3.GoodsName = "白T恤";
+                panel3.Price = "￥86";
+                panel3.PicturePath = imgPath;
+                goodsPanels.Add(2, panel3);
+                panel3.SetValue(RelativePanel.RightOfProperty, panel2.Name);
+                panel3.SetValue(RelativePanel.AlignTopWithPanelProperty, true);
+                goodsPanel.Children.Add(panel3);
 
                 //item 4
-                Carrier carrier4 = new Carrier();
-                carrier4.Name = "黑T恤";
-                carrier4.price = "￥86";
-                carrier4.picWidth = _picWidth;
-                carrier4.checkBorder = _margin;
-                carrier4.backGround = brush;
-                list.Add(carrier4);
+                GoodsPanel panel4 = new GoodsPanel();
+                panel4.PictureWith = PicWidth;
+                CheckBox check4 = new CheckBox();
+                //check1.SetValue(StyleProperty,);
+                check4.Checked += CheckBox_Checked;
+                check4.Unchecked += CheckBox_Unchecked;
+                panel4.Check = check4;
+                if ((style as Style) != null)
+                {
+                    check4.SetValue(StyleProperty, style);
+                }
+                panel4.PictureBrush = brush;
+                panel4.GoodsName = "黑T恤";
+                panel4.Price = "￥86";
+                panel4.PicturePath = imgPath;
+                goodsPanels.Add(3, panel4);
+                panel4.SetValue(RelativePanel.RightOfProperty, panel3.Name);
+                panel4.SetValue(RelativePanel.AlignTopWithPanelProperty, true);
+                goodsPanel.Children.Add(panel4);
+                ResetPicturePanelPositon();
             }
         }
 
@@ -203,8 +344,14 @@ namespace PancakeCooker.Views
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             topPannel.Width = Window.Current.Bounds.Width;
-            goodsGrid.Width = buttom.Width =  Window.Current.Bounds.Width;
-            buttom.Height =  Window.Current.Bounds.Height - topPannel.Height;
+            goodsScrollViewr.Width =  Window.Current.Bounds.Width - goodsScrollViewr.Margin.Left - goodsScrollViewr.Margin.Right;
+            goodsScrollViewr.Height =  Window.Current.Bounds.Height - topPannel.Height;
+            double currentWith = goodsScrollViewr.Width;
+            if (Math.Abs(currentWith - preWidth) > refreshStep)
+            {
+                preWidth = currentWith;
+                ResetPicturePanelPositon();
+            }            
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
@@ -214,41 +361,29 @@ namespace PancakeCooker.Views
             {
                 return;
             }
-            UIElement parent = (UIElement)VisualTreeHelper.GetParent(check);
+            var parent = VisualTreeHelper.GetParent(check);
             if(null == parent)
             {
                 return;
             }
-            int count = VisualTreeHelper.GetChildrenCount(parent);
-            GoodsInfo info = new GoodsInfo();
-            //info.check = check;
-            for(int i=0; i<count; i++)
+            var grid = VisualTreeHelper.GetParent(parent);
+            if(null == grid)
             {
-                UIElement child = (UIElement)VisualTreeHelper.GetChild(parent,i);
-                string strType = child.ToString();
-                if(strType.Equals(CHECKBOX))
-                {
-                    continue;
-                }
-                else if(strType.Equals(TEXTBLOCK))
-                {
-                    TextBlock text = (TextBlock)child;
-                    if(text.Text.StartsWith("￥"))
-                    {
-                        info.price = text.Text.Substring(text.Text.IndexOf('￥') + 1);
-                    }
-                    else
-                    {
-                        info.name = text.Text;
-                    }
-                }               
+                return;
             }
-            info.img = source;
-            info.imgUri = imgPath;
-            info.count = 1;
-            info.imageName = imageName;
-            selectedGoods.Add(check,info);
-            return;
+            var panel = VisualTreeHelper.GetParent(grid);
+            if (null != panel && panel.ToString().Equals(typeof(GoodsPanel).ToString()))
+            {
+                GoodsPanel goods = panel as GoodsPanel;
+                GoodsInfo info = new GoodsInfo();
+                info.img = source;
+                info.imgUri = imgPath;
+                info.count = 1;
+                info.imageName = imageName;
+                info.name = goods.GoodsName;
+                info.price = goods.Price.Substring(goods.Price.IndexOf('￥')+1);
+                selectedGoods.Add(check, info);
+            }            
         }
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)

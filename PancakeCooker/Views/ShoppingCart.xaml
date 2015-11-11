@@ -5,72 +5,10 @@
     xmlns:local="using:PancakeCooker.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:data="using:PancakeCooker.Common"
     mc:Ignorable="d" SizeChanged="Page_SizeChanged">
-
-    <Page.Resources>
-        <CollectionViewSource x:Name="GoodsCVS"  IsSourceGrouped="False" />
-        <DataTemplate x:Name="GoodsGridViewTemplate" x:DataType="data:GoodsInfo">
-            <StackPanel Orientation="Vertical" Margin="10,10,10,10" >
-                <Grid Background="#EBEBEB">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <RelativePanel>
-                        <CheckBox Name="checkBox" Margin="20,10,0,345" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" Style="{StaticResource CheckBoxStyle}"/>
-                        <Grid RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True" Margin="20,0,20,130">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <!--<Image Name="img" Width="180" Height="150" Stretch="Fill" Source="{x:Bind img}"></Image>-->
-                            <Border Name="picBorder" BorderBrush="White" Width="220" Height="220" BorderThickness="1" CornerRadius="5,5,5,5" Background="{x:Bind brush}"></Border>
-                        </Grid>
-                        <TextBlock Name="imageName" Foreground="#333333" FontSize="16" Text="{x:Bind imageName}"  Margin="20,0,0,90" Width="180" Height="30"  RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True" TextAlignment="Left"></TextBlock>
-                        <TextBlock Name="goods" Foreground="#333333" Text="商品信息" Margin="20,0,0,55" Width="80" Height="25"   RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True" TextAlignment="Left"></TextBlock>
-                        <TextBlock Name="goodsName" Foreground="#333333" Text="{x:Bind name}"  Margin="0,0,20,55" Width="80" Height="25" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignBottomWithPanel="True" TextAlignment="Right"></TextBlock>
-                        <!--row 4-->
-                        <Rectangle Width="22" Height="22" Margin="20,0,0,20" Stroke="Gray" StrokeThickness="1"  RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True"></Rectangle>
-                        <SymbolIcon Symbol="Remove" Width="22" Height="22" Margin="20,0,0,20" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True"  RenderTransformOrigin="0.5,0.5">
-                            <SymbolIcon.RenderTransform>
-                                <CompositeTransform ScaleX="0.6" ScaleY="0.6"></CompositeTransform>
-                            </SymbolIcon.RenderTransform>
-                        </SymbolIcon>
-                        <Button Name="decrease" Click="Decrease_Click" Width="22" Height="22" Margin="20,0,0,20" BorderThickness="0" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True">
-                            <Button.Background>
-                                <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
-                            </Button.Background>
-                        </Button>
-                        <Rectangle Width="40" Height="22" Margin="41,0,0,20" Stroke="Gray" StrokeThickness="1"   RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True"></Rectangle>
-                        <TextBlock Name="goodsNumber" Text="{x:Bind count}" Width="40" Height="22" Margin="41,0,0,20" Foreground="#333333" FontSize="14" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True" TextAlignment="Center"></TextBlock>
-                        <Rectangle Width="22" Height="22" Margin="80,0,0,20" Stroke="Gray" StrokeThickness="1"   RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True"></Rectangle>
-                        <SymbolIcon Symbol="Add" Width="22" Height="22" Margin="80,0,0,20" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True" RenderTransformOrigin="0.5,0.5">
-                            <SymbolIcon.RenderTransform>
-                                <CompositeTransform ScaleX="0.6" ScaleY="0.6"></CompositeTransform>  
-                            </SymbolIcon.RenderTransform>
-                        </SymbolIcon>
-                        <Button Name="add" Click="Add_Click" Width="22" Height="22" Margin="80,0,0,20" BorderThickness="0" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True">
-                            <Button.Background>
-                                <SolidColorBrush Color="White" Opacity="0"></SolidColorBrush>
-                            </Button.Background>
-                        </Button>
-                        <TextBlock Text="￥" Margin="0,0,70,20" Width="25" Height="20" FontSize="14" Foreground="#FD2839" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignBottomWithPanel="True" TextAlignment="Right"></TextBlock>
-                        <TextBlock Name="priceValue" Text="{x:Bind price}" Margin="0,0,40,20" Width="30" Height="25" FontSize="20" Foreground="#FD2839" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignBottomWithPanel="True" TextAlignment="Left"></TextBlock>
-                        <TextBlock Name="goodsNumber2" Text="{x:Bind countString}" Margin="0,0,20,20" Width="20" Height="20" FontSize="13" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignBottomWithPanel="True" TextAlignment="Right"></TextBlock>
-                    </RelativePanel>
-                    <Border BorderBrush="White" BorderThickness="1"></Border>
-                </Grid>
-            </StackPanel>
-        </DataTemplate>
-    </Page.Resources>
-    
-    <RelativePanel Name="mainPanel" Background="#f1f1f1">
-        <RelativePanel Name ="mainGrid" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+   
+    <RelativePanel  Background="#f1f1f1">
+        <RelativePanel Name ="mainPanel" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignRightWithPanel="True">
             <RelativePanel Name="topPanel" Background="#412F5F" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True">
                 <StackPanel Name="left" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" Background="Transparent">
                     <Button Name="returnBack" Click="returnBack_Click" Background="Transparent" Width="{Binding Path=ActualHeight,ElementName=topPanel}" Height="{Binding Path=ActualHeight,ElementName=topPanel}" BorderThickness="0">
@@ -101,30 +39,27 @@
                     </Button>
                 </StackPanel>
             </RelativePanel>
-            <!--<StackPanel Grid.Row="1" Name="midPanel" Background="White" HorizontalAlignment="Left" Width="{Binding Path=ActualWidth,ElementName=mainGrid}">-->
-            <RelativePanel Name="goods" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Below="topPanel" Width="{Binding Path=ActualWidth,ElementName=mainGrid}">
-                <Grid Name="goodsGrid">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <GridView ItemsSource="{x:Bind GoodsCVS.View}"
-                      ItemTemplate="{StaticResource GoodsGridViewTemplate}"
-                      Grid.Row="1"
-                      Grid.ColumnSpan="2">
-                    </GridView>
-                </Grid>
-            </RelativePanel>
+            <ScrollViewer Name="goodsScrollView" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Below="topPanel" RelativePanel.Above="buttomPanel" RelativePanel.AlignRightWithPanel="True" Margin="10,0,10,0" VerticalScrollMode="Enabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden" >
+                <RelativePanel Name="goods" >
+                </RelativePanel>
+            </ScrollViewer>
             <!--</StackPanel>-->
-            <RelativePanel  Background="#D3D3D3" Name="buttomPanel" Width="{Binding Path=ActualWidth,ElementName=mainGrid}" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True">
-                <TextBlock Name="priceText" Margin="20, 80, 0, 0" Width="50" Height="20" FontSize="18" Foreground="#333333" Text="合计：" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True"></TextBlock>
-                <TextBlock Name="priceSymbol" Width="15" FontSize="12" Height="15" Text="￥" Foreground="#FD2839" RelativePanel.AlignBottomWithPanel="True" RelativePanel.LeftOf="price"></TextBlock>
-                <TextBlock Name="price" Margin="0, 8, 0, 0" Text="0" Foreground="#FD2839" Height="20" Width="60" FontSize="18" TextAlignment="Left" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignTopWithPanel="True"></TextBlock>
+            <RelativePanel  Background="#D3D3D3" Name="buttomPanel"  Height="40"  Width="{Binding Path=ActualWidth,ElementName=mainPanel}" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignBottomWithPanel="True">
+                <TextBlock Name="priceText" Width="50" Height="20" FontSize="18" Foreground="#333333" Text="合计：" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel ="True">
+                    <TextBlock.RenderTransform>
+                        <TranslateTransform X="0" Y="0"></TranslateTransform>
+                    </TextBlock.RenderTransform>   
+                </TextBlock>
+                <TextBlock Name="priceSymbol" Width="15" FontSize="12" Height="15" Text="￥" Foreground="#FD2839" RelativePanel.AlignTopWithPanel ="True" RelativePanel.LeftOf="price">
+                    <TextBlock.RenderTransform>
+                        <TranslateTransform X="0" Y="15"></TranslateTransform>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
+                <TextBlock Name="price" Text="0" Foreground="#FD2839" Height="20" Width="60" FontSize="18" TextAlignment="Left" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignTopWithPanel ="True">
+                    <TextBlock.RenderTransform>
+                        <TranslateTransform X="0" Y="0"></TranslateTransform>
+                    </TextBlock.RenderTransform>   
+                </TextBlock>
             </RelativePanel>
         </RelativePanel>
         <RelativePanel Name="HidePanel" Visibility="Collapsed" PointerPressed="HidePanel_PointerPressed"> 

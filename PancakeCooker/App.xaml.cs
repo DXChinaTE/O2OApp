@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
+using PancakeCooker.Views;
 
 namespace PancakeCooker
 {

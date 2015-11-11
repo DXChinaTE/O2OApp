@@ -16,10 +16,12 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI;
+using Windows.UI.ViewManagement;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.Data.Xml.Dom;
 using PancakeCooker.Common;
+using PancakeCooker.Common.ItemTemplatePanel;
 
 // “空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=234238 上提供
 
@@ -30,24 +32,54 @@ namespace PancakeCooker.Views
     /// </summary>
     public sealed partial class ShoppingCart : Page
     {
-        private Dictionary<CheckBox, GoodsInfo> selectedGoods = new Dictionary<CheckBox, GoodsInfo>();
-        private const string CHECKBOX = "Windows.UI.Xaml.Controls.CheckBox";
-        private const string TEXTBLOCK = "Windows.UI.Xaml.Controls.TextBlock";
-        private const string IMAGE = "Windows.UI.Xaml.Controls.Image";
-        private const string BUTTON = "Windows.UI.Xaml.Controls.Button";
+        private Dictionary<ShopCartPanel, GoodsInfo> selectedGoods = new Dictionary<ShopCartPanel, GoodsInfo>();
         private List<GoodsInfo> goodsList = new List<GoodsInfo>();
+        private Dictionary<int, ShopCartPanel> goodsPanels = new Dictionary<int, ShopCartPanel>();
+        private Style checkboxStyle = null;
+        private double MinPictureWith { get; set; }
+        private double MaxPictureWith { get; set; }
+        private double _picWidth { get; set; }
+        private double PicWidth
+        {
+            get
+            {
+                return _picWidth;
+            }
+            set
+            {
+                _picWidth = value;
+                goodsPanelWidth = _picWidth + 2 * PictureMargin;
+            }
+        }
+        private double preWidth { get; set; }
+        private double refreshStep { get; set; }
+        private int pictureColumn { get; set; }
+        private double _pictureMargin;
+        private double PictureMargin
+        {
+            get
+            {
+                return _pictureMargin;
+            }
+            set
+            {
+                _pictureMargin = value;
+                goodsPanelWidth = _picWidth + 2 * _pictureMargin;
+            }
+        }
+        private double goodsPanelWidth { get; set; }
 
         public ShoppingCart()
         {
             this.InitializeComponent();
-            GoodsCVS.Source = new ObservableCollection<GoodsInfo>();
+            InitParam();            
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
             {
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
-            }
-            if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
-            {
-                this.Margin = new Thickness(0, 0, 0, 0);
+                TranslateTransform trans = new TranslateTransform();
+                trans.X = 0;
+                trans.Y = 7;
+                priceSymbol.SetValue(RenderTransformProperty,trans);
             }
             string platform = Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily;//Windows.Mobile Windows.Desktop
             if(platform.Equals("Windows.Mobile"))
@@ -63,6 +95,44 @@ namespace PancakeCooker.Views
                 priceSymbol.Margin = new Thickness(0, 0, 0, 10);
             }
 
+        }
+
+        private void InitParam()
+        {
+            ResourceDictionary dic = Application.Current.Resources;
+            IList<ResourceDictionary> dics = dic.MergedDictionaries;
+            ResourceDictionary resource = null;
+            foreach (var item in dics)
+            {
+                if (item.Source.AbsolutePath.Contains("/Files/Styles/Styles.xaml"))
+                {
+                    resource = item;
+                    break;
+                }
+
+            }
+            object style = null;
+            if (null != resource)
+            {
+                resource.TryGetValue("CheckBoxStyle", out style);
+                if (null != style)
+                {
+                    checkboxStyle = style as Style;
+                }
+            }                   
+            refreshStep = 10;
+            PictureMargin = 20;
+            preWidth = Window.Current.Bounds.Width - 20; ;
+            if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
+            {
+                pictureColumn = 1;
+                PicWidth = MinPictureWith = MaxPictureWith = preWidth / pictureColumn - 2*PictureMargin;
+            }
+            else
+            {
+                PicWidth = MinPictureWith = 200;
+                MaxPictureWith = 250;
+            }
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -88,102 +158,96 @@ namespace PancakeCooker.Views
 
         private void ResizeControl()
         {
-            topPanel.Width = buttomPanel.Width = mainPanel.Width = HidePanel.Width = mainGrid.Width = Window.Current.Bounds.Width;
+            topPanel.Width = buttomPanel.Width = mainPanel.Width = HidePanel.Width  = Window.Current.Bounds.Width;
             topPanel.Height = buttomPanel.Height = 40;
-            mainPanel.Height = HidePanel.Height = mainGrid.Height = Window.Current.Bounds.Height;
-            goods.Width = Window.Current.Bounds.Width;           
-            goods.Height = Window.Current.Bounds.Height - 80;           
-            goodsGrid.Width = Window.Current.Bounds.Width;
+            if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Mobile"))
+            {
+                StatusBar bar = StatusBar.GetForCurrentView();
+                double height = bar.OccludedRect.Height;              
+                mainPanel.Height = HidePanel.Height  = Window.Current.Bounds.Height - height;
+                goodsScrollView.Height = mainPanel.Height - topPanel.Height - buttomPanel.Height;
+            }
+            else
+            {
+                mainPanel.Height = HidePanel.Height = Window.Current.Bounds.Height;
+                goodsScrollView.Height = Window.Current.Bounds.Height - topPanel.Height - buttomPanel.Height;
+            }          
+            goods.Width = goodsScrollView.Width = Window.Current.Bounds.Width - goodsScrollView.Margin.Left - goodsScrollView.Margin.Right;          
+            double currentWidth = goodsScrollView.Width;
+            if(Math.Abs(currentWidth - preWidth) > refreshStep)
+            {
+                preWidth = currentWidth;
+                ResetPicturePanelPositon();
+            } 
+        }
+
+        private void ResetPicturePanelPositon()
+        {
+            pictureColumn = Convert.ToInt32(Math.Floor(preWidth / (MinPictureWith + 2 * PictureMargin)));
+            PicWidth = preWidth / pictureColumn - 2 * PictureMargin;
+            PicWidth = PicWidth > MaxPictureWith ? MaxPictureWith : PicWidth;
+            foreach (var item in goodsPanels)
+            {
+                item.Value.ClearValue(RelativePanel.BelowProperty);
+                item.Value.ClearValue(RelativePanel.AlignLeftWithPanelProperty);
+                item.Value.ClearValue(RelativePanel.RightOfProperty);
+                item.Value.ClearValue(RelativePanel.AlignTopWithPanelProperty);
+                item.Value.PictureWith = PicWidth;
+                //set left
+                if (item.Key % pictureColumn == 0)
+                {
+                    item.Value.SetValue(RelativePanel.AlignLeftWithPanelProperty, true);
+                }
+                else
+                {
+                    item.Value.SetValue(RelativePanel.RightOfProperty, goodsPanels[item.Key - 1].Name);
+                }
+                //set top
+                if (item.Key / pictureColumn == 0)
+                {
+                    item.Value.SetValue(RelativePanel.AlignTopWithPanelProperty, true);
+                }
+                else
+                {
+                    item.Value.SetValue(RelativePanel.BelowProperty, goodsPanels[item.Key - pictureColumn].Name);
+                }
+            }
         }
 
         private void Decrease_Click(object sender, RoutedEventArgs e)
-        {          
+        {
             Button add = sender as Button;
             if (null == add)
             {
                 return;
             }
-            UIElement parent = (UIElement)VisualTreeHelper.GetParent(add);
-            if (null == parent)
+            var panel = VisualTreeHelper.GetParent(add);
+            if (null == panel)
             {
                 return;
             }
-            int count = VisualTreeHelper.GetChildrenCount(parent);
-            double price = 0;
-            bool bChecked = false;
-            int currentNumber = 0;
-            CheckBox check = null;
-            GoodsInfo info = new GoodsInfo();
-            for (int i = 0; i < count; i++)
+            var grid = VisualTreeHelper.GetParent(panel);
+            if (null == grid)
             {
-                UIElement child = (UIElement)VisualTreeHelper.GetChild(parent, i);
-                if (null == child)
+                return;
+            }
+            var shopcartPanel = VisualTreeHelper.GetParent(grid);
+            if (null != shopcartPanel && shopcartPanel.ToString().Equals(typeof(ShopCartPanel).ToString()))
+            {
+                ShopCartPanel itemPanel = shopcartPanel as ShopCartPanel;
+                double price = itemPanel.DecreaseClick();
+                bool bCheck = (bool)itemPanel.Check.IsChecked;
+                if (bCheck)
                 {
-                    continue;
-                }
-                string strType = child.ToString();
-                if (strType.Equals(TEXTBLOCK))
-                {
-                    TextBlock text = (TextBlock)child;
-                    if (text.Name.Equals("goodsNumber"))
+                    double oldPrice = Convert.ToDouble(this.price.Text);
+                    oldPrice -= price;
+                    this.price.Text = Convert.ToString(oldPrice);
+                    foreach (var item in selectedGoods)
                     {
-                        int number = Convert.ToInt32(text.Text);
-                        if( number > 1)
+                        if (item.Key.Equals(itemPanel.Check))
                         {
-                            text.Text = Convert.ToString(number - 1);
-                            currentNumber = number - 1;
-                            info.count = currentNumber;
-                        }                      
-                    }
-                    else if (text.Name.Equals("goodsNumber2"))
-                    {
-                        int number = Convert.ToInt32(text.Text.Substring(text.Text.IndexOf('x')+1));
-                        if (number > 1)
-                        {
-                            text.Text = "x" + Convert.ToString(number - 1);
+                            item.Value.count = itemPanel.GoodsCount;
                         }
-                    }
-                    else if (text.Name.Equals("priceValue"))
-                    {
-                        price = Convert.ToDouble(text.Text);
-                    }
-                    else if(text.Name.Equals("goodsName"))
-                    {
-                        info.name = text.Text;
-                    }
-                    else if (text.Name.Equals("imageName"))
-                    {
-                        info.imageName = text.Text;
-                    }
-                }
-                else if (strType.Equals(CHECKBOX))
-                {
-                    check = (CheckBox)child;
-                    if (null == check)
-                    {
-                        continue;
-                    }
-                    bChecked = (bool)check.IsChecked;
-                }
-            }
-            foreach(var item in goodsList)
-            {
-                if(item.imageName.Equals(info.imageName) && item.name.Equals(info.name))
-                {
-                    item.count = info.count;
-                    break;
-                }
-            }
-            if (bChecked)
-            {
-                double oldPrice = Convert.ToDouble(this.price.Text);
-                oldPrice -= price;
-                this.price.Text = Convert.ToString(oldPrice);
-                foreach (var item in selectedGoods)
-                {
-                    if (item.Key.Equals(check))
-                    {
-                        item.Value.count = currentNumber;
                     }
                 }
             }
@@ -196,81 +260,33 @@ namespace PancakeCooker.Views
             {
                 return;
             }
-            UIElement parent = (UIElement)VisualTreeHelper.GetParent(add);
-            if (null == parent)
+            var panel = VisualTreeHelper.GetParent(add);
+            if (null == panel)
             {
                 return;
             }
-            int count = VisualTreeHelper.GetChildrenCount(parent);
-            double price = 0;   
-            bool bChecked = false;
-            int currentNumber = 0;
-            CheckBox check = null;
-            GoodsInfo info = new GoodsInfo();
-            for (int i = 0; i < count; i++)
+            var grid = VisualTreeHelper.GetParent(panel);
+            if (null == grid)
             {
-                UIElement child = (UIElement)VisualTreeHelper.GetChild(parent, i);
-                if(null == child)
-                {
-                    continue;
-                }
-                string strType = child.ToString();            
-                if (strType.Equals(TEXTBLOCK))
-                {
-                    TextBlock text = (TextBlock)child;
-                    if (text.Name.Equals("goodsNumber"))
-                    {
-                        int number = Convert.ToInt32(text.Text);
-                        text.Text = Convert.ToString(number + 1);
-                        currentNumber = number + 1;
-                        info.count = currentNumber;
-                    } 
-                    else if(text.Name.Equals("goodsNumber2"))
-                    {
-                        int number = Convert.ToInt32(text.Text.Substring(text.Text.IndexOf('x') + 1));                       
-                        text.Text = "x" + Convert.ToString(number + 1);
-                    }
-                    else if(text.Name.Equals("priceValue"))
-                    {
-                        price = Convert.ToDouble(text.Text.Substring(text.Text.IndexOf('￥') + 1));
-                    }
-                    else if (text.Name.Equals("goodsName"))
-                    {
-                        info.name = text.Text;
-                    }
-                    else if (text.Name.Equals("imageName"))
-                    {
-                        info.imageName = text.Text;
-                    }
-                }
-                else if(strType.Equals(CHECKBOX))
-                {
-                    check = (CheckBox)child;
-                    if(null == check)
-                    {
-                        continue;
-                    }
-                    bChecked = (bool)check.IsChecked;
-                }
+                return;
             }
-            foreach (var item in goodsList)
+            var shopcartPanel = VisualTreeHelper.GetParent(grid);
+            if (null != shopcartPanel && shopcartPanel.ToString().Equals(typeof(ShopCartPanel).ToString()))
             {
-                if (item.imageName.Equals(info.imageName) && item.name.Equals(info.name))
+                ShopCartPanel itemPanel = shopcartPanel as ShopCartPanel;
+                double price = itemPanel.AddClick();
+                bool bCheck = (bool)itemPanel.Check.IsChecked;
+                if(bCheck)
                 {
-                    item.count = info.count;
-                    break;
-                }
-            }
-            if (bChecked)
-            {               
-                double oldPrice = Convert.ToDouble(this.price.Text);
-                oldPrice += price;
-                this.price.Text = Convert.ToString(oldPrice);
-                foreach(var item in selectedGoods)
-                {
-                    if(item.Key.Equals(check))
+                    double oldPrice = Convert.ToDouble(this.price.Text);
+                    oldPrice += price;
+                    this.price.Text = Convert.ToString(oldPrice);
+                    foreach (var item in selectedGoods)
                     {
-                        item.Value.count = currentNumber;
+                        if (item.Key.Equals(itemPanel.Check))
+                        {
+                            item.Value.count = itemPanel.GoodsCount;
+                        }
                     }
                 }
             }
@@ -283,52 +299,26 @@ namespace PancakeCooker.Views
             {
                 return;
             }
-            selectedGoods.Remove(check);
-            GoodsInfo info = new GoodsInfo();         
-            UIElement parent = (UIElement)VisualTreeHelper.GetParent(check);
-            if (null == parent)
+            var panel = VisualTreeHelper.GetParent(check);
+            if (null == panel)
             {
                 return;
             }
-            int count = VisualTreeHelper.GetChildrenCount(parent);
-            for (int i = 0; i < count; i++)
+            var grid = VisualTreeHelper.GetParent(panel);
+            if (null == grid)
             {
-                UIElement child = (UIElement)VisualTreeHelper.GetChild(parent, i);
-                string strType = child.ToString();
-                if (strType.Equals(CHECKBOX))
-                {
-                    continue;
-                }
-                else if (strType.Equals(TEXTBLOCK))
-                {
-                    TextBlock text = (TextBlock)child;
-                    if (text.Name.Equals("priceValue"))
-                    {
-                        info.price = text.Text;
-                    }
-                    else if (text.Name.Equals("goodsName"))
-                    {
-                        foreach (var item in goodsList)
-                        {
-                            if (item.name.Equals(text.Text))
-                            {
-                                info.imgUri = item.imgUri;
-                                break;
-                            }
-                        }
-                        info.name = text.Text;
-                    }
-                    else if (text.Name.Equals("goodsNumber"))
-                    {
-                        info.count = Convert.ToInt32(text.Text);
-                    }
-                }
+                return;
             }
-            int number = info.count;
-            double price = Convert.ToDouble(info.price.Substring(info.price.IndexOf('￥') + 1));
-            double oldPrice = Convert.ToDouble(this.price.Text);
-            oldPrice -= (price * number);
-            this.price.Text = Convert.ToString(oldPrice);
+            var shopcartPanel = VisualTreeHelper.GetParent(grid);
+            if (null != shopcartPanel && shopcartPanel.ToString().Equals(typeof(ShopCartPanel).ToString()))
+            {
+                ShopCartPanel itemPanel = shopcartPanel as ShopCartPanel;
+                double totalPrice = itemPanel.GetItemTotalPrice();
+                double oldPrice = Convert.ToDouble(this.price.Text);
+                oldPrice -= totalPrice;
+                this.price.Text = Convert.ToString(oldPrice);
+                selectedGoods.Remove(itemPanel);
+            }
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
@@ -338,58 +328,32 @@ namespace PancakeCooker.Views
             {
                 return;
             }
-            UIElement parent = (UIElement)VisualTreeHelper.GetParent(check);
-            if (null == parent)
+            var panel = VisualTreeHelper.GetParent(check);
+            if (null == panel)
             {
                 return;
             }
-            int count = VisualTreeHelper.GetChildrenCount(parent);
-            GoodsInfo info = new GoodsInfo();
-            //info.check = check;
-            for(int i=0; i<count; i++)
+            var grid = VisualTreeHelper.GetParent(panel);
+            if(null == grid)
             {
-                UIElement child = (UIElement)VisualTreeHelper.GetChild(parent, i);
-                string strType = child.ToString();
-                if (strType.Equals(CHECKBOX))
-                {
-                    continue;
-                }
-                else if (strType.Equals(TEXTBLOCK))
-                {
-                    TextBlock text = (TextBlock)child;
-                    if (text.Name.Equals("priceValue"))
-                    {
-                        info.price = text.Text;
-                    }
-                    else if(text.Name.Equals("goodsName"))
-                    {                       
-                        info.name = text.Text;
-                    }
-                    else if(text.Name.Equals("goodsNumber"))
-                    {
-                        info.count = Convert.ToInt32(text.Text);
-                    }
-                    else if(text.Name.Equals("imageName"))
-                    {
-                        info.imageName = text.Text;
-                    }
-                }               
+                return;
             }
-            foreach (var item in goodsList)
+            var shopcartPanel = VisualTreeHelper.GetParent(grid);
+            if(null != shopcartPanel && shopcartPanel.ToString().Equals(typeof(ShopCartPanel).ToString()))
             {
-                if (item.name.Equals(info.name) && item.imageName.Equals(info.imageName))
-                {
-                    info.imgUri = item.imgUri;
-                    info.img = item.img;
-                    break;
-                }
-            }
-            selectedGoods.Add(check,info);
-            int number = info.count;
-            double price = Convert.ToDouble(info.price.Substring(info.price.IndexOf('￥') + 1));
-            double oldPrice = Convert.ToDouble(this.price.Text);
-            oldPrice += (price * number);
-            this.price.Text = Convert.ToString(oldPrice);       
+                ShopCartPanel itemPanel = shopcartPanel as ShopCartPanel;
+                double totalPrice = itemPanel.GetItemTotalPrice();
+                double oldPrice = Convert.ToDouble(this.price.Text);
+                oldPrice += totalPrice;
+                this.price.Text = Convert.ToString(oldPrice);
+                GoodsInfo info = new GoodsInfo();
+                info.name = itemPanel.GoodsName;
+                info.price = itemPanel.Price;
+                info.count = itemPanel.GoodsCount;
+                info.imageName = itemPanel.PictureName;
+                info.imgUri = itemPanel.PictureURL;
+                selectedGoods.Add(itemPanel, info);
+            }             
         }
 
         private void deleteBtn_Click(object sender, RoutedEventArgs e)
@@ -426,8 +390,7 @@ namespace PancakeCooker.Views
                 if (null != list)
                 {
                     goodsList = list;
-                }
-                ObservableCollection<GoodsInfo> infos = (ObservableCollection<GoodsInfo>)GoodsCVS.Source;
+                }              
                 Windows.Storage.StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
                 Windows.Storage.StorageFile shoppingCartStorageFile = await storageFolder.GetFileAsync("ShoppingCart.xml");                
                 XmlDocument doc = await Windows.Data.Xml.Dom.XmlDocument.LoadFromFileAsync(shoppingCartStorageFile);
@@ -482,10 +445,45 @@ namespace PancakeCooker.Views
                         }
                     }
                 }
+                int index = 0;
                 foreach (var item in goodsList)
                 {
-                    infos.Add(item);
+                    ShopCartPanel panel = new ShopCartPanel();
+                    panel.Picture = item.brush;
+                    panel.GoodsName = item.name;
+                    panel.PictureName = item.imageName;
+                    panel.GoodsCount = item.count;
+                    panel.Price = item.price;
+                    panel.Name = item.imgUri + item.name;
+                    panel.PictureURL = item.imgUri;
+                    CheckBox check = new CheckBox();
+                    if(null != checkboxStyle)
+                    {
+                        check.SetValue(StyleProperty,checkboxStyle);
+                    }
+                    check.Checked += CheckBox_Checked;
+                    check.Unchecked += CheckBox_Unchecked;
+                    panel.Check = check;
+                    Button btnAdd = new Button();
+                    btnAdd.Click += Add_Click;
+                    Button btnDecrease = new Button();
+                    btnDecrease.Click += Decrease_Click;
+                    panel.ButtonAdd = btnAdd;
+                    panel.ButtonDecrease = btnDecrease;
+                    panel.PictureWith = PicWidth;
+                    if(index > 0 && goodsPanels.ContainsKey(index - 1))
+                    {
+                        panel.SetValue(RelativePanel.RightOfProperty, goodsPanels[index - 1].Name);                        
+                    }
+                    else
+                    {
+                        panel.SetValue(RelativePanel.AlignLeftWithPanelProperty, true);
+                    }
+                    panel.SetValue(RelativePanel.AlignTopWithPanelProperty, true);
+                    goods.Children.Add(panel);
+                    goodsPanels.Add(index++,panel);
                 }
+                ResetPicturePanelPositon();
             }
             catch(Exception ex)
             {
@@ -589,12 +587,10 @@ namespace PancakeCooker.Views
 
         private async void ConfirmDelete_Click(object sender, RoutedEventArgs e)
         {
-            List<CheckBox> checkboxs = new List<CheckBox>();
             HidePanel.Visibility = Visibility.Collapsed;
             foreach(var item in selectedGoods)
             {               
                 GoodsInfo info = item.Value;
-                checkboxs.Add(item.Key);
                 foreach(var goods in goodsList)
                 {
                     if(goods.imgUri.Equals(info.imgUri) && goods.name.Equals(info.name))
@@ -603,20 +599,30 @@ namespace PancakeCooker.Views
                         break;
                     }
                 }
-            }
-            for(int i=0; i < checkboxs.Count; i++)
-            {
-                checkboxs[i].IsChecked = false;
-            }
+                foreach(var panel in goodsPanels)
+                {
+                    if(panel.Value.Equals(item.Key))
+                    {
+                        goodsPanels.Remove(panel.Key);
+                        break;
+                    }
+                }
+            }           
             selectedGoods.Clear();
             await WriteShorppingcart();
-            ObservableCollection<GoodsInfo> infos = (ObservableCollection<GoodsInfo>)GoodsCVS.Source;
-            infos.Clear();
-            foreach(var item in goodsList)
+            List<ShopCartPanel> panelTemp = new List<ShopCartPanel>();
+            int index = 0;
+            foreach(var item in goodsPanels)
             {
-                infos.Add(item);
+                panelTemp.Add(item.Value);
             }
-
+            goodsPanels.Clear();
+            foreach(var item in panelTemp)
+            {
+                goodsPanels.Add(index++,item);
+            }
+            ResetPicturePanelPositon();
+                       
         }
 
         private void CancelDelete_Click(object sender, RoutedEventArgs e)
